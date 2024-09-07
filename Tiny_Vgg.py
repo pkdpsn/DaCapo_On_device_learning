@@ -18,7 +18,7 @@ print("Libraries imported - ready to use PyTorch", torch.__version__)
 torch.manual_seed(42)
 torch.cuda.manual_seed(42)
 BATCH_SIZE = 32
-EPOCHS = 3
+EPOCHS = 1
 
 
 # Load the data

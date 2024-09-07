@@ -3,9 +3,17 @@ import psutil
 import matplotlib.pyplot as plt
 import time
 import numpy as np
+import platform
+
+print(f"Operating System: {platform.system()}")
+print(f"Version: {platform.version()}")
+print(f"Platform: {platform.platform()}")
+print(f"Processor: {platform.processor()}")
 
 # Path to your training script
 script_path = 'Tiny_Vgg.py'
+
+print(script_path)
 
 # Lists to collect resource usage data
 cpu_usage = []
@@ -13,15 +21,24 @@ ram_usage_mb = []  # RAM usage in MB
 timestamps = []
 
 # Start the subprocess
-process = subprocess.Popen(['python', script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+# process = subprocess.Popen(['python', script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+process = subprocess.Popen(
+    ['python', script_path],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    universal_newlines=True,  # Ensures output is returned as a string
+    bufsize=1  # Line-buffered output
+)
 # Get the PID of the subprocess
 pid = process.pid
-
+print("CheckPoint1")
 # Monitor the subprocess
 start_time = time.time()
 try:
-    while process.poll() is None:  # While the process is running
+    # Create iterators to read stdout and stderr
+    for stdout_line in iter(process.stdout.readline, ""):
+        print(stdout_line.strip())  # Print output from Tiny_Vgg.py
+
         try:
             proc = psutil.Process(pid)
             print(proc, proc.memory_info().rss/(1024*1024))
@@ -32,8 +49,10 @@ try:
         except psutil.NoSuchProcess:
             print("The process has terminated unexpectedly.")
             break  # Exit the loop if the process is no longer available
-        
+
         time.sleep(1)  # Wait before next measurement
+
+    process.stdout.close()
 
 except KeyboardInterrupt:
     print("Monitoring interrupted.")
