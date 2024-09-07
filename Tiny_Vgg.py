@@ -1,18 +1,14 @@
-import time
-# time.sleep(5)
 print("Hello World")
 import torch
 # import os
 from torch import nn
-# import pandas as pd
-# import matplotlib.pyplot as plt
 from torchvision import datasets
-# from torchvision import transforms
 from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 from utils import *
 from model import MNIST_CNN
 device = 'cpu'## "cuda" if torch.cuda.is_available() else "cpu"
+
 verbose = True
 image_plot = True
 if verbose:
