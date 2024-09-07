@@ -1,10 +1,4 @@
-import torch
 from torch import nn
-import pandas as pd
-import matplotlib.pyplot as plt
-from torchvision import datasets
-from torchvision import transforms
-from torchvision.transforms import ToTensor
 device = 'cpu'## "cuda" if torch.cuda.is_available() else "cpu"
 
 class MNIST_CNN(nn.Module):

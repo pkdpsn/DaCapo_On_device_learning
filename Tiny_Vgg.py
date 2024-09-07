@@ -1,10 +1,13 @@
+import time
+# time.sleep(5)
+print("Hello World")
 import torch
-import os
+# import os
 from torch import nn
-import pandas as pd
-import matplotlib.pyplot as plt
+# import pandas as pd
+# import matplotlib.pyplot as plt
 from torchvision import datasets
-from torchvision import transforms
+# from torchvision import transforms
 from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 from utils import *
@@ -31,7 +34,7 @@ if verbose:
   print("Train data size: ", len(train_data))
   print("Test data size: ", len(test_data))
   print("Data loaded")
-  
+
 class_names = train_data.classes
 if verbose:
   print("Classes: ", class_names)
@@ -42,7 +45,7 @@ if verbose:
 # plt.axis(False)
 
 train_dataloader = DataLoader(dataset=train_data,batch_size=BATCH_SIZE,shuffle=True)
-test_dataloader = DataLoader(dataset=test_data,batch_size=BATCH_SIZE,shuffle=False) 
+test_dataloader = DataLoader(dataset=test_data,batch_size=BATCH_SIZE,shuffle=False)
 
 ## define model and optimizer
 model = MNIST_CNN(input_shape=1,hidden_units=10,output_shape=len(class_names)).to(device)
