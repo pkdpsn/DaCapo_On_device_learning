@@ -2,26 +2,39 @@ import subprocess
 import psutil
 import matplotlib.pyplot as plt
 import time
-import numpy as np
 import platform
+import os
 
+# Print the OS information
 print(f"Operating System: {platform.system()}")
 print(f"Version: {platform.version()}")
 print(f"Platform: {platform.platform()}")
 print(f"Processor: {platform.processor()}")
 
+# Check if the operating system is Linux
+if platform.system() != "Linux":
+    print("This script is designed to run only on Linux. Exiting...")
+    exit()
+
 # Path to your training script
 script_path = 'Tiny_Vgg.py'
-
-print(script_path)
+print(f"Running script: {script_path}")
 
 # Lists to collect resource usage data
 cpu_usage = []
 ram_usage_mb = []  # RAM usage in MB
 timestamps = []
+energy_usage = []  # Energy in Joules
+
+# Function to get energy usage on Linux via powercap interface
+def get_energy_usage():
+    energy_file = '/sys/class/powercap/intel-rapl:0/energy_uj'
+    if os.path.exists(energy_file):
+        with open(energy_file, 'r') as f:
+            return int(f.read().strip()) / 1e6  # Convert from microjoules to joules
+    return None
 
 # Start the subprocess
-# process = subprocess.Popen(['python', script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 process = subprocess.Popen(
     ['python', script_path],
     stdout=subprocess.PIPE,
@@ -29,11 +42,14 @@ process = subprocess.Popen(
     universal_newlines=True,  # Ensures output is returned as a string
     bufsize=1  # Line-buffered output
 )
+
 # Get the PID of the subprocess
 pid = process.pid
-print("CheckPoint1")
+print("Monitoring process with PID:", pid)
+
 # Monitor the subprocess
 start_time = time.time()
+initial_energy = get_energy_usage()  # Initial energy reading
 try:
     # Create iterators to read stdout and stderr
     for stdout_line in iter(process.stdout.readline, ""):
@@ -41,10 +57,16 @@ try:
 
         try:
             proc = psutil.Process(pid)
-            # print(proc, proc.memory_info().rss/(1024*1024))
+
+            # Collect CPU and RAM usage data
             cpu_usage.append(proc.cpu_percent(interval=1))  # CPU percent since last call
             ram_usage_mb.append(proc.memory_info().rss / (1024 * 1024))  # RAM usage in MB
             timestamps.append(time.time() - start_time)  # Elapsed time
+
+            # Collect energy usage data if available
+            current_energy = get_energy_usage()
+            if current_energy is not None and initial_energy is not None:
+                energy_usage.append(current_energy - initial_energy)
 
         except psutil.NoSuchProcess:
             print("The process has terminated unexpectedly.")
@@ -58,20 +80,34 @@ except KeyboardInterrupt:
     print("Monitoring interrupted.")
 
 # Ensure the process has completed
-# process.wait()
+process.wait()
 
 # Plot the collected data
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))
+fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 8))
 
+# Plot CPU Usage
 ax1.plot(timestamps, cpu_usage, label='CPU Usage (%)', color='blue')
 ax1.set_title('CPU Usage')
 ax1.set_xlabel('Time (s)')
 ax1.set_ylabel('CPU Usage (%)')
 
+# Plot RAM Usage
 ax2.plot(timestamps, ram_usage_mb, label='RAM Usage (MB)', color='orange')
 ax2.set_title('RAM Usage')
 ax2.set_xlabel('Time (s)')
 ax2.set_ylabel('RAM Usage (MB)')
+
+# Plot Energy Consumption if available
+if energy_usage:
+    ax3.plot(timestamps, energy_usage, label='Energy Usage (J)', color='green')
+    ax3.set_title('Energy Consumption')
+    ax3.set_xlabel('Time (s)')
+    ax3.set_ylabel('Energy (Joules)')
+else:
+    ax3.text(0.5, 0.5, 'Energy data unavailable', horizontalalignment='center', verticalalignment='center', transform=ax3.transAxes)
+    ax3.set_title('Energy Consumption')
+    ax3.set_xlabel('Time (s)')
+    ax3.set_ylabel('Energy (Joules)')
 
 fig.tight_layout()
 plt.show()
