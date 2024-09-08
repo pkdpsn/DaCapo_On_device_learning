@@ -41,9 +41,9 @@ try:
 
         try:
             proc = psutil.Process(pid)
-            # print(proc, proc.memory_info().rss/(1024*1024))
+            print(proc, proc.memory_info().rss/(1024*1024))
             cpu_usage.append(proc.cpu_percent(interval=1))  # CPU percent since last call
-            ram_usage_mb.append(proc.memory_info().rss / (1024 * 1024))  # RAM usage in MB
+            ram_usage_mb.append(max(proc.memory_info().rss / (1024 * 1024)-431.5,0))  # RAM usage in MB
             timestamps.append(time.time() - start_time)  # Elapsed time
 
         except psutil.NoSuchProcess:

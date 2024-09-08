@@ -6,7 +6,8 @@ from torchvision import datasets
 from torch.utils.data import DataLoader
 from torchvision.transforms import ToTensor
 from utils import *
-from model import MNIST_CNN
+# from model import MNIST_CNN
+from model_eff import MNIST_CNN
 device = 'cpu'## "cuda" if torch.cuda.is_available() else "cpu"
 
 verbose = True
@@ -17,7 +18,7 @@ print("Libraries imported - ready to use PyTorch", torch.__version__)
 
 torch.manual_seed(42)
 torch.cuda.manual_seed(42)
-BATCH_SIZE = 32
+BATCH_SIZE = 1024
 EPOCHS = 2
 
 

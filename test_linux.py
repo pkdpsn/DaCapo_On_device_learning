@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import time
 import platform
 import os
+import resource  # Import the resource module to set memory limits
 
 # Print the OS information
 print(f"Operating System: {platform.system()}")
@@ -15,6 +16,12 @@ print(f"Processor: {platform.processor()}")
 if platform.system() != "Linux":
     print("This script is designed to run only on Linux. Exiting...")
     exit()
+
+# Limit memory usage to 600 MB for the subprocess
+def set_memory_limit():
+    soft, hard = 3000 * 1024 * 1024, 3050 * 1024 * 1024  # 600 MB limit
+    print("Setting memory limit...",soft, hard)
+    resource.setrlimit(resource.RLIMIT_AS, (soft, hard))
 
 # Path to your training script
 script_path = 'Tiny_Vgg.py'
@@ -34,11 +41,12 @@ def get_energy_usage():
             return int(f.read().strip()) / 1e6  # Convert from microjoules to joules
     return None
 
-# Start the subprocess
+# Start the subprocess with limited memory
 process = subprocess.Popen(
     ['python', script_path],
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
+    # preexec_fn=set_memory_limit,  # Set memory limit before starting the process
     universal_newlines=True,  # Ensures output is returned as a string
     bufsize=1  # Line-buffered output
 )
@@ -80,7 +88,7 @@ except KeyboardInterrupt:
     print("Monitoring interrupted.")
 
 # Ensure the process has completed
-process.wait()
+# process.wait()
 
 # Plot the collected data
 fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 8))
