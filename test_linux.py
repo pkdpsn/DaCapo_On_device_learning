@@ -54,6 +54,8 @@ process = subprocess.Popen(
 # Get the PID of the subprocess
 pid = process.pid
 print("Monitoring process with PID:", pid)
+proc = psutil.Process(pid)
+proc.cpu_affinity([0])
 
 # Monitor the subprocess
 start_time = time.time()
@@ -68,7 +70,7 @@ try:
 
             # Collect CPU and RAM usage data
             cpu_usage.append(proc.cpu_percent(interval=1))  # CPU percent since last call
-            ram_usage_mb.append(proc.memory_info().rss / (1024 * 1024))  # RAM usage in MB
+            ram_usage_mb.append(max(proc.memory_info().rss / (1024 * 1024)-431,0))  # RAM usage in MB
             timestamps.append(time.time() - start_time)  # Elapsed time
 
             # Collect energy usage data if available
