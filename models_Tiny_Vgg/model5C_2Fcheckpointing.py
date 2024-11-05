@@ -45,11 +45,7 @@ class MNIST_CNN(nn.Module):
 
     def forward(self, x):
         # Forward pass through the first convolutional block without checkpointing
-        x = self.conv_block_1(x)
-
-        # Save the output of the first convolutional block
-        self.saved_conv1_output = x.clone()
-
+        x = checkpoint(self.conv_block_1, x)
         # Use checkpointing for the remaining convolutional blocks
         x = checkpoint(self.conv_block_2, x)
         x = checkpoint(self.conv_block_3, x)
@@ -63,4 +59,15 @@ class MNIST_CNN(nn.Module):
         x = checkpoint(self.dense_1, x)
         x = checkpoint(self.dense_2, x)
 
+        return x
+
+    def forwardOptimal(self, x):
+        x = self.conv_block_1(x)
+        x = self.conv_block_2(x)
+        x = self.conv_block_3(x)
+        x = self.conv_block_4(x)
+        x = checkpoint(self.conv_block_5,x)
+        x = self.flatten(x)
+        x = checkpoint(self.dense_1, x)
+        x = checkpoint(self.dense_2, x)
         return x
