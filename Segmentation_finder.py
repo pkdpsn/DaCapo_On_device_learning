@@ -1,6 +1,7 @@
 import torch.nn as nn
 from Seg_utils import compute_layer_costs , layer_memory_list , Rkp , computation_cost , max_mem_req
-from models_Tiny_Vgg.model15C_2F import MNIST_CNN
+from models_Tiny_Vgg.model20C_2F import MNIST_CNN
+import time
 device = 'cpu'
 
 
@@ -52,9 +53,12 @@ def main():
     Mi = layer_memory_list(model, input_shape)
     M = 200
     n = len(Ci) - 1
+    start = time.time()
     optimal_seg, min_cost = optimalSegFinder(Ci, Mi, M, n)
+    end = time.time()
     print("Optimal Segmentation:", optimal_seg)
     print("Minimum Computation Cost:", min_cost)
+    print("Time taken:", end - start)
 
 
 if __name__ == '__main__':
