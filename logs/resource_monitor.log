@@ -1,0 +1,23 @@
+Operating System: Windows
+Version: 10.0.26120
+Platform: Windows-11-10.0.26120-SP0
+Processor: Intel64 Family 6 Model 165 Stepping 2, GenuineIntel
+Script Path: Tiny_Vgg.py
+Started process 7428 with CPU affinity set to core 0
+Script output: cpu
+Time: 7.79s, CPU Usage: 96.9%, RAM Usage: 81.46484375 MB
+Script output: Libraries imported - ready to use PyTorch 2.4.0
+Time: 10.56s, CPU Usage: 95.3%, RAM Usage: 81.625 MB
+Script output: Train data size:  60000
+Time: 13.32s, CPU Usage: 93.8%, RAM Usage: 81.69140625 MB
+Script output: Test data size:  10000
+Time: 16.06s, CPU Usage: 95.3%, RAM Usage: 81.7265625 MB
+Script output: Data loaded
+Time: 18.82s, CPU Usage: 95.3%, RAM Usage: 81.74609375 MB
+Script output: Classes:  ['0 - zero', '1 - one', '2 - two', '3 - three', '4 - four', '5 - five', '6 - six', '7 - seven', '8 - eight', '9 - nine']
+Time: 21.58s, CPU Usage: 96.9%, RAM Usage: 81.7578125 MB
+Script output: Epoch 0
+Time: 24.35s, CPU Usage: 95.3%, RAM Usage: 81.7578125 MB
+Script output: --------------------------
+Time: 27.10s, CPU Usage: 98.4%, RAM Usage: 81.7734375 MB
+Monitoring interrupted by user.
