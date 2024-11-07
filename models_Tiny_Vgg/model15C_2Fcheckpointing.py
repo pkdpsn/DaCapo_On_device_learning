@@ -93,7 +93,7 @@ class MNIST_CNN(nn.Module):
         self.dense_1 = nn.Linear(in_features=hidden_units * 28 * 28, out_features=hidden_units)  # Adjust for input size
         self.dense_2 = nn.Linear(in_features=hidden_units, out_features=output_shape)
 
-    def forward(self, x):
+    def forwardsuboptimal(self, x):
         # Use checkpointing for all convolutional layers
         x = checkpoint(self.conv_block_1, x)  # Layer 1
         x = checkpoint(self.conv_block_2, x)  # Layer 2
@@ -117,7 +117,39 @@ class MNIST_CNN(nn.Module):
         x = checkpoint(self.dense_2, x)  # Dense Layer 2
         return x
 
-    def forwardOptimal(self,x):
+    def forward(self, x):
+        # Forward pass through the first convolutional block without checkpointing
+        x = self.conv_block_1(x)
+
+        # Save the output of the first convolutional block
+        self.saved_conv1_output = x.clone()
+
+        # Use checkpointing for the remaining convolutional blocks
+        x = checkpoint(self.conv_block_2, x)
+        x = checkpoint(self.conv_block_3, x)
+        x = checkpoint(self.conv_block_4, x)
+        x = checkpoint(self.conv_block_5, x)
+        x = checkpoint(self.conv_block_6, x)
+        x = checkpoint(self.conv_block_7, x)
+        x = checkpoint(self.conv_block_8, x)
+        x = checkpoint(self.conv_block_9, x)
+        x = checkpoint(self.conv_block_10, x)
+        x = checkpoint(self.conv_block_11, x)
+        x = checkpoint(self.conv_block_12, x)
+        x = checkpoint(self.conv_block_13, x)
+        x = checkpoint(self.conv_block_14, x)
+        x = checkpoint(self.conv_block_15, x)
+
+        # Flatten the output for the dense layers
+        x = self.flatten(x)
+
+        # Use checkpointing for the dense layers
+        x = checkpoint(self.dense_1, x)
+        x = checkpoint(self.dense_2, x)
+
+        return x
+
+    def forwardsub(self,x):
         x = self.conv_block_1(x)  # Layer 1
         x = checkpoint(self.conv_block_2, x)  # Layer 2
         x = checkpoint(self.conv_block_3, x)  # Layer 3

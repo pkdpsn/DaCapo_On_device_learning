@@ -47,14 +47,14 @@ try:
             proc = psutil.Process(pid)
             # print(proc, proc.memory_info().rss/(1024*1024))
             cpu_usage.append(proc.cpu_percent(interval=1))  # CPU percent since last call
-            ram_usage_mb.append(max(proc.memory_info().rss / (1024 * 1024)-193.95,0))
+            ram_usage_mb.append(max(proc.memory_info().rss / (1024 * 1024)-431.95,0))
             timestamps.append(time.time() - start_time)  # Elapsed time
 
         except psutil.NoSuchProcess:
             print("The process has terminated unexpectedly.")
             break  # Exit the loop if the process is no longer available
-        if cpu_usage[-1] > 10:
-            time.sleep((cpu_usage[-1] - 20) / 100)  # Adjust sleep time to reduce usage to 20%
+        # if cpu_usage[-1] > 10:
+        #     time.sleep((cpu_usage[-1] - 20) / 100)  # Adjust sleep time to reduce usage to 20%
 
         time.sleep(1)  # Wait before next measurement
 
@@ -62,7 +62,7 @@ try:
 
 except KeyboardInterrupt:
     print("Monitoring interrupted.")
-
+print(f"Max mem usage: {max(ram_usage_mb)}")
 # Ensure the process has completed
 # process.wait()
 
@@ -80,7 +80,7 @@ ax2.set_xlabel('Time (s)')
 ax2.set_ylabel('RAM Usage (MB)')
 
 fig.tight_layout()
-plt.show()
+# plt.show()
 
 
 # import subprocess

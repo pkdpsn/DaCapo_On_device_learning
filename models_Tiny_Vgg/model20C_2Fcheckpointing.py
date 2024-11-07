@@ -216,7 +216,10 @@ class MNIST_CNN(nn.Module):
 
     def forward(self, x):
         # Use checkpointing for all convolutional layers
-        x = checkpoint(self.conv_block_1, x)  # Layer 1
+        x = self.conv_block_1(x)
+
+        # Save the output of the first convolutional block
+        self.saved_conv1_output = x.clone()
         x = checkpoint(self.conv_block_2, x)  # Layer 2
         x = checkpoint(self.conv_block_3, x)  # Layer 3
         x = checkpoint(self.conv_block_4, x)  # Layer 4
@@ -244,7 +247,7 @@ class MNIST_CNN(nn.Module):
         x = checkpoint(self.dense_2, x)  # Dense Layer 2
         return x
 
-    def forwardOptimal(self, x):
+    def forwardsub(self, x):
         x = checkpoint(self.conv_block_1, x)  # Layer 1
         x = self.conv_block_2(x)
         x = checkpoint(self.conv_block_3, x)  # Layer 3
