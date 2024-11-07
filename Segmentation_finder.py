@@ -1,6 +1,6 @@
 import torch.nn as nn
 from Seg_utils import compute_layer_costs , layer_memory_list , Rkp , computation_cost , max_mem_req
-from models_Tiny_Vgg.model20C_2F import MNIST_CNN
+from models_Tiny_Vgg.model3C_2F import MNIST_CNN
 import time
 device = 'cpu'
 

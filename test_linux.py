@@ -35,11 +35,12 @@ energy_usage = []  # Energy in Joules
 
 # Function to get energy usage on Linux via powercap interface
 def get_energy_usage():
-    energy_file = '/sys/class/powercap/intel-rapl:0/energy_uj'
-    if os.path.exists(energy_file):
-        with open(energy_file, 'r') as f:
-            return int(f.read().strip()) / 1e6  # Convert from microjoules to joules
-    return None
+    # energy_file = '/sys/class/powercap/intel-rapl:0/energy_uj'
+    # if os.path.exists(energy_file):
+    #     with open(energy_file, 'r') as f:
+    #         return int(f.read().strip()) / 1e6  # Convert from microjoules to joules
+    # return None
+    return 1
 
 # Start the subprocess with limited memory
 process = subprocess.Popen(
@@ -55,16 +56,18 @@ process = subprocess.Popen(
 pid = process.pid
 print("Monitoring process with PID:", pid)
 proc = psutil.Process(pid)
-proc.cpu_affinity([0])
+# proc.cpu_affinity([0])
 
 # Monitor the subprocess
 start_time = time.time()
 initial_energy = get_energy_usage()  # Initial energy reading
+print("Initial energy:", initial_energy)
 try:
     # Create iterators to read stdout and stderr
+    print("Starting monitoring...")
     for stdout_line in iter(process.stdout.readline, ""):
         print(stdout_line.strip())  # Print output from Tiny_Vgg.py
-
+        
         try:
             proc = psutil.Process(pid)
 
@@ -89,6 +92,8 @@ try:
 except KeyboardInterrupt:
     print("Monitoring interrupted.")
 
+except Exception as e:
+    print("An error occurred during monitoring:", e)
 # Ensure the process has completed
 # process.wait()
 
@@ -120,4 +125,5 @@ else:
     ax3.set_ylabel('Energy (Joules)')
 
 fig.tight_layout()
-plt.show()
+# plt.show()
+plt.savefig('output.png')
